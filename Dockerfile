@@ -1,23 +1,12 @@
-# Use an official Node runtime as a parent image
-FROM node:16
-
-# Set the working directory to /app
+# Stage 1: Build the React app
+FROM node:lts as builder
 WORKDIR /app
-
-# Copy the package.json and package-lock.json to the working directory
-COPY ./package*.json ./
-
-# Install the dependencies
+COPY package*.json ./
 RUN npm install
-
-# Copy the remaining application files to the working directory
 COPY . .
-
-# Build the application
 RUN npm run build
-
-# Expose port 3000 for the application
-EXPOSE 3000
-
-# Start the application
-CMD [ "npm", "run", "start" ]
+# Stage 2: Create the production image
+FROM nginx:latest
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
