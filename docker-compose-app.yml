@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   myapp:
-    image: ffarhanhameed010/far-devops-assignment-6:latest  # Use the pre-built image
+    image: farhanhameed010/far-devops-assignment-6:latest  # Use the pre-built image
     restart: always
     networks:
       - myapp-network  # Attach to a custom network
