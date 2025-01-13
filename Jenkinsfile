@@ -33,9 +33,6 @@ pipeline {
                             -Dsonar.projectKey=far-devops-assignment \
                             -Dsonar.projectName=far-devops-assignment \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=http://sonarqube:9000 \
-                            -Dsonar.login=admin \
-                            -Dsonar.password=tkxel123 \
                             -Dsonar.javascript.node.maxspace=4096
                         """
                     }
