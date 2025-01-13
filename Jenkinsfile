@@ -104,10 +104,10 @@ pipeline {
         DOCKER_TAG = 'latest'
         DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_HUB_USERNAME = 'farhanhameed010'
-        // Add AWS EC2 credentials and details
-        EC2_CREDENTIALS = credentials('aws-ec2-credentials')
+        // EC2 connection details
         EC2_HOST = '54.173.51.159'
         EC2_USER = 'ubuntu'
+        EC2_KEY = credentials('ec2-ssh-key')
     }
     
     stages {
@@ -173,25 +173,19 @@ pipeline {
             steps {
                 script {
                     // Copy docker-compose file to EC2
-                    sshagent(['aws-ec2-credentials']) {
-                        sh """
-                            scp -o StrictHostKeyChecking=no docker-compose-app.yml ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/
-                            
-                            ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                                # Login to Docker Hub on EC2
-                                echo ${DOCKER_HUB_CREDS_PSW} | docker login -u ${DOCKER_HUB_CREDS_USR} --password-stdin
-                                
-                                # Pull the latest image
-                                docker pull ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                                
-                                # Stop and remove existing containers
-                                docker-compose -f docker-compose-app.yml down
-                                
-                                # Start the application
-                                docker-compose -f docker-compose-app.yml up -d
-                            '
-                        """
-                    }
+                    sh """
+                        scp -o StrictHostKeyChecking=no -i ${EC2_KEY} docker-compose-app.yml ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/
+                    """
+                    
+                    // Execute deployment commands on EC2
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i ${EC2_KEY} ${EC2_USER}@${EC2_HOST} '
+                            echo ${DOCKER_HUB_CREDS_PSW} | docker login -u ${DOCKER_HUB_CREDS_USR} --password-stdin
+                            docker pull ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker-compose -f docker-compose-app.yml down
+                            docker-compose -f docker-compose-app.yml up -d
+                        '
+                    """
                 }
             }
         }
