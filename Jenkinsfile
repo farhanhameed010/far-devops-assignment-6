@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clean Workspace') {
             steps {
-                cleanWs() // Ensures a clean workspace before starting
+                cleanWs() // Ensures a clean workspace before starting 
             }
         }
 
