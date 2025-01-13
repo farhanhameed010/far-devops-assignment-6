@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  myapp:
+    image: ffarhanhameed010/far-devops-assignment-6:latest  # Use the pre-built image
+    restart: always
+    networks:
+      - myapp-network  # Attach to a custom network
+    ports:
+      - "80:80"  # Map port 81 on the host to port 80 in the container
+
+networks:
+  myapp-network:
+    driver: bridge  # Use the default bridge network driver
