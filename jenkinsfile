@@ -35,7 +35,7 @@ pipeline {
                             -Dsonar.sources=. \
                             -Dsonar.host.url=http://sonarqube:9000 \
                             -Dsonar.login=admin \
-                            -Dsonar.password=tkxel1234 \
+                            -Dsonar.password=tkxel123 \
                             -Dsonar.javascript.node.maxspace=4096
                         """
                     }
